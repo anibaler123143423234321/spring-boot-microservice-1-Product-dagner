@@ -4,6 +4,8 @@ package com.dagnerchuman.springbootmicroservice1Product.service;
 import com.dagnerchuman.springbootmicroservice1Product.model.Producto;
 import com.dagnerchuman.springbootmicroservice1Product.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
+    @Transactional
     public Producto saveProducto(Producto producto) {
         // Verificar si el stock es suficiente
         if (producto.getStock() < 0) {
@@ -30,7 +33,9 @@ public class ProductoServiceImpl implements ProductoService {
         return productoRepository.save(producto);
     }
 
+
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean comprarProducto(Long productoId, int cantidad) {
         Optional<Producto> optionalProducto = productoRepository.findById(productoId);
         if (optionalProducto.isPresent()) {
